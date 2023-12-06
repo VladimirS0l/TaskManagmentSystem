@@ -1,0 +1,33 @@
+version: '3'
+name: task-management
+
+services:
+  task-management-main:
+    build: .
+    container_name: task-management-main
+    ports:
+      - "8000:8000"
+    environment:
+      SERVER_PORT: "8000"
+
+  task-management-postgres:
+    container_name: task-management-postgres
+    image: postgres:13.0-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: task-management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+
+  task-management-redis:
+    image: redis:7.2-rc-alpine
+    restart: on-failure
+    container_name: task-management-redis
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass 123456
+
+
+
+
