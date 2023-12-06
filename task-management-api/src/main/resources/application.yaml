@@ -1,1 +1,26 @@
+spring:
+  application:
+    name: task-management-api
+
+  datasource:
+#    url: jdbc:postgresql://task-management-postgres:5432/task-management?currentSchema=taskmanagement
+    url: jdbc:postgresql://localhost:5432/task-management?currentSchema=taskmanagement
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    change-log: classpath:liquibase/db.changelog.yaml
+    enabled: true
+    default-schema: taskmanagement
+
+#  cache:
+#    type: redis
+#    cache-names: redis-cache
+#
+#  data:
+#    redis:
+#      host: task-management-redis
+#      port: 6379
+#      password: 123456
 

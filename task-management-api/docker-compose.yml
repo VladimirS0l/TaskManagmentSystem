@@ -9,6 +9,9 @@ services:
       - "8000:8000"
     environment:
       SERVER_PORT: "8000"
+    depends_on:
+      - task-management-postgres
+      - task-management-redis
 
   task-management-postgres:
     container_name: task-management-postgres

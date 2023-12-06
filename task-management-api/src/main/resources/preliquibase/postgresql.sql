@@ -1,1 +1,1 @@
-CREATE SCHEMA IF NOT EXISTS task-management;
+CREATE SCHEMA IF NOT EXISTS taskmanagement;
