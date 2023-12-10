@@ -2,6 +2,9 @@ package ru.solarev.taskmanagementapi.entity.task;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.solarev.taskmanagementapi.entity.task.enums.Priority;
@@ -11,7 +14,8 @@ import ru.solarev.taskmanagementapi.entity.user.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "tasks")
 public class Task {
@@ -24,19 +28,20 @@ public class Task {
     @Column(name = "description")
     private String description;
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private Status status;
+    @Enumerated(EnumType.STRING)
     @Column(name = "priority")
     private Priority priority;
-    @ManyToOne
-    @JoinColumn(name = "author_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private User author;
-    @ManyToOne
-    @JoinColumn(name = "performer_id")
-    private User performer;
-    @OneToMany(mappedBy = "taskComment")
+    @Column(name = "assignee")
+    private String assignee;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
+            mappedBy = "task")
     private List<Comment> comments;
     @CreationTimestamp
-    @Column(name = "created_date", updatable = false)
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
     @UpdateTimestamp
     @Column(name = "updated_date")

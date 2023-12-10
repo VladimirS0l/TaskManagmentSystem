@@ -1,44 +1,73 @@
 package ru.solarev.taskmanagementapi.entity.user;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.solarev.taskmanagementapi.entity.task.Comment;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import ru.solarev.taskmanagementapi.entity.task.Task;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "username")
-    private String username;
+    private String name;
     @Column(name = "email")
     private String email;
     @Column(name = "password")
     private String password;
     @Transient
     private String confirmedPassword;
-    @OneToMany(mappedBy = "author")
-    private List<Task> taskAuthors;
-    @OneToMany(mappedBy = "performer")
-    private List<Task> taskPerformers;
-    @OneToMany(mappedBy = "userComment")
-    private List<Comment> comments;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "author")
+    private List<Task> tasks;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
     @CreationTimestamp
-    @Column(name = "created_date", updatable = false)
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
     @UpdateTimestamp
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
