@@ -1,11 +1,11 @@
 ## Система управления задачами
 
-Для запуска приложения необходимо, сделать git clone https://github.com/VladimirS0l/TaskManagmentSystem 
-в свой локальный репозиторий.
+Для запуска приложения необходимо, открыть терминал и ввести команду git clone https://github.com/VladimirS0l/TaskManagmentSystem 
+для копирования файлов приложения в свой локальный репозиторий.
 
-Перейти в директорию /task-management-api , открыть терминал в текущей директории в ввести команду docker compose up --build.
+Перейти в директорию /task-management-api, в текущей директории в ввести команду docker compose up --build.
 
-Дождаться пока приложение запустится в Docker-compose.
+Дождаться пока приложение запустится.
 
 Перейти по ссылке http://localhost:8000/swagger-ui/index.html
 
