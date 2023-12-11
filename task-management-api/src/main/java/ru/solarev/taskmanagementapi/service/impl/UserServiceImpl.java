@@ -61,7 +61,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-//    @Cacheable(value = "UserService::findById", key="#user.id", condition = "#user.id!=null")
     @Caching(cacheable = {
             @Cacheable(value = "UserService::findById", key="#user.id", condition = "#user.id!=null"),
             @Cacheable(value = "UserService::findByName", key="#user.name", condition = "#user.name!=null"),
@@ -101,7 +100,7 @@ public class UserServiceImpl implements UserService {
         }
         var user = findById(updateUser.getId());
         user.setName(updateUser.getName());
-        user.setPassword(updateUser.getPassword());
+        user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         user.setEmail(updateUser.getEmail());
         user.setUpdatedDate(LocalDateTime.now());
         if (!user.getEmail().equals(email)) {
