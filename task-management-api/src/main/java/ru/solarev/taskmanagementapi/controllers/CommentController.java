@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.solarev.taskmanagementapi.dto.CommentDto;
 import ru.solarev.taskmanagementapi.dto.mapper.CommentMapper;
 import ru.solarev.taskmanagementapi.dto.validation.OnCreate;
-import ru.solarev.taskmanagementapi.dto.validation.OnUpdate;
 import ru.solarev.taskmanagementapi.service.CommentService;
 
 import java.security.Principal;
@@ -56,6 +55,5 @@ public class CommentController {
             Principal principal) {
         commentService.delete(id, principal.getName());
     }
-
 
 }

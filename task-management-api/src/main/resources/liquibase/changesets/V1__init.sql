@@ -41,5 +41,4 @@ create table if not exists comments
     username varchar(255) not null,
     message text not null,
     created_date timestamp default current_timestamp,
-    updated_date timestamp
 );

@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface CommentService {
     List<Comment> findAllByTaskId(Long taskId);
+    Comment findById(Long id);
     Comment create(Long taskId, Comment comment, String email);
     void delete(Long id, String email);
 }

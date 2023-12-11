@@ -3,8 +3,8 @@ spring:
     name: task-management-api
 
   datasource:
-#    url: jdbc:postgresql://task-management-postgres:5432/task-management?currentSchema=taskmanagement
-    url: jdbc:postgresql://localhost:5432/task-management?currentSchema=taskmanagement
+    url: jdbc:postgresql://task-management-postgres:5432/task-management?currentSchema=taskmanagement
+#    url: jdbc:postgresql://localhost:5432/task-management?currentSchema=taskmanagement
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
@@ -14,15 +14,16 @@ spring:
     enabled: true
     default-schema: taskmanagement
 
-#  cache:
-#    type: redis
-#    cache-names: redis-cache
-#
-#  data:
-#    redis:
-#      host: task-management-redis
-#      port: 6379
-#      password: 123456
+  cache:
+    type: redis
+    cache-names: redis-cache
+
+  data:
+    redis:
+#      host: localhost
+      host: task-management-redis
+      port: 6379
+      password: 123456
 
 security:
   jwt:
@@ -31,3 +32,4 @@ security:
 
 springdoc:
   override-with-generic-response: false
+

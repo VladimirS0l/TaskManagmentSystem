@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
-import ru.solarev.taskmanagementapi.exceptions.AccessDeniedException;
-import ru.solarev.taskmanagementapi.exceptions.ExceptionBody;
-import ru.solarev.taskmanagementapi.exceptions.ResourceMappingException;
-import ru.solarev.taskmanagementapi.exceptions.ResourceNotFoundException;
+import ru.solarev.taskmanagementapi.exceptions.*;
 
 import javax.naming.AuthenticationException;
 import java.util.List;
@@ -31,6 +28,12 @@ public class AdviceController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionBody handlerResourceMapping(ResourceMappingException e) {
         return new ExceptionBody(e.getMessage());
+    }
+
+    @ExceptionHandler(ResourceAccessDeniedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionBody handlerResourceAccessDenied(ResourceAccessDeniedException e) {
+        return new ExceptionBody("Вы не можете управлять чужими данными");
     }
 
     @ExceptionHandler(IllegalStateException.class)

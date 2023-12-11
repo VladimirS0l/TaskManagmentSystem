@@ -11,6 +11,7 @@ import ru.solarev.taskmanagementapi.entity.task.enums.Priority;
 import ru.solarev.taskmanagementapi.entity.task.enums.Status;
 import ru.solarev.taskmanagementapi.entity.user.User;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "tasks")
-public class Task {
+public class Task implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -37,7 +38,7 @@ public class Task {
     private User author;
     @Column(name = "assignee")
     private String assignee;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
             mappedBy = "task")
     private List<Comment> comments;
     @CreationTimestamp

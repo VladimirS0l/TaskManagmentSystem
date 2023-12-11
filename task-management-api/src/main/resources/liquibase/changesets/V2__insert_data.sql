@@ -1,6 +1,6 @@
 insert into users (username, email, password) values
-                                                  ('Ivan Ivanov', 'test@mail.ru', 'MTIzMTIz'),
-                                                  ('Petr Petrov', 'test2@mail.ru', 'NDU2NDU2');
+                                                  ('Ivan Ivanov', 'test@mail.ru', '$2a$12$iqpndSnT.LoNQ8qpBNdNTeaUanTS3Ofhc1ppBKT0/NrQdfj4lFwhm'),
+                                                  ('Petr Petrov', 'test2@mail.ru', '$2a$12$vUE8pRswzEoTb/wtZjtXk.CXokZursMzxAv7hF8j2dVNNRfMrnXqe');
 
 insert into roles (role) values
                              ('ROLE_USER'),

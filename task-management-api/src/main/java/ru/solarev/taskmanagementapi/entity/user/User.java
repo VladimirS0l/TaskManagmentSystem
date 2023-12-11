@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.solarev.taskmanagementapi.entity.task.Task;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

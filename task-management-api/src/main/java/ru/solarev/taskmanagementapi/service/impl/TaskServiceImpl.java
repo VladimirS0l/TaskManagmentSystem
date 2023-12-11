@@ -1,10 +1,14 @@
 package ru.solarev.taskmanagementapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;;
+import org.springframework.transaction.annotation.Transactional;
 import ru.solarev.taskmanagementapi.entity.task.Task;
 import ru.solarev.taskmanagementapi.entity.task.enums.Priority;
 import ru.solarev.taskmanagementapi.entity.task.enums.Status;
@@ -26,6 +30,7 @@ public class TaskServiceImpl implements TaskService {
     private final UserService userService;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Task> findAllTasksAuthor(String email, Priority priority,
                                             Integer page, Integer pageSize) {
         Specification<Task> spec = Specification.where(null);
@@ -41,6 +46,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Task> findAllTasksByUserId(Long id, Integer page, Integer pageSize) {
         Specification<Task> spec = Specification.where(null);
         User user = userService.findById(id);
@@ -52,6 +58,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "TaskService::findById", key="#taskId")
     public Task findById(Long taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() ->
@@ -59,21 +67,23 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
+    @Cacheable(value = "TaskService::findById", key="#task.id")
     public Task create(Task task, String email) {
         var author = userService.findByEmail(email);
-        var assignee = userService.findByName(task.getAssignee());
         task.setId(null);
         task.setAuthor(author);
-        task.setAssignee(assignee.getName());
+        task.setAssignee(author.getName());
         task.setComments(new ArrayList<>());
-
         return taskRepository.save(task);
     }
 
     @Override
+    @Transactional
+    @CachePut(value = "TaskService::findById", key="#updateTask.id")
     public Task update(Task updateTask, String email) {
-        checkAuthor(email, updateTask);
         var task = findById(updateTask.getId());
+        checkAuthor(email, task);
         task.setTitle(updateTask.getTitle());
         task.setDescription(updateTask.getDescription());
 
@@ -82,6 +92,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "TaskService::findById", key="#id")
     public void delete(Long id, String email) {
         var task = findById(id);
         checkAuthor(email, task);
@@ -89,12 +101,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
+    @CachePut(value = "TaskService::findById", key="#taskId")
     public Task updateStatus(Status status, Long taskId,
                              Long assigneeId, String email) {
         Task task = findById(taskId);
         var author = userService.findByEmail(email);
         var assignee = userService.findById(assigneeId);
-        if (author == task.getAuthor() ||
+        if (author.getName().equals(task.getAssignee()) ||
                 assignee.getName().equals(task.getAssignee())) {
             task.setStatus(status);
             task.setUpdatedDate(LocalDateTime.now());
@@ -103,6 +117,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
+    @CachePut(value = "TaskService::findById", key="#taskId")
     public Task setAssignee(Long assigneeId, Long taskId, String email) {
         var user = userService.findById(assigneeId);
         var task = findById(taskId);
@@ -114,8 +130,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     private void checkAuthor(String authorEmail, Task task) {
-        var author = userService.findByEmail(authorEmail);
-        if (author != task.getAuthor()) {
+        if (!authorEmail.equals(task.getAuthor().getEmail())) {
             throw new ResourceAccessDeniedException("Вы не можете изменить чужую задачу");
         }
     }
