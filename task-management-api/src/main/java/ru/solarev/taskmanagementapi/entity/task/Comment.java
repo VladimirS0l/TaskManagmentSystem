@@ -9,13 +9,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.cache.annotation.EnableCaching;
 import ru.solarev.taskmanagementapi.entity.user.User;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -29,7 +30,4 @@ public class Comment {
     @CreationTimestamp
     @Column(name = "created_date")
     private LocalDateTime createdDate;
-    @UpdateTimestamp
-    @Column(name = "updated_date")
-    private LocalDateTime updatedDate;
 }

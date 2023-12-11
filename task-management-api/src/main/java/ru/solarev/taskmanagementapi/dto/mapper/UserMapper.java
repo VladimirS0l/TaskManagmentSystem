@@ -22,8 +22,6 @@ public class UserMapper implements Mappable<User, UserDto> {
         userDto.setId(entity.getId());
         userDto.setUsername(entity.getName());
         userDto.setEmail(entity.getEmail());
-        userDto.setPassword(entity.getPassword());
-        userDto.setConfirmedPassword(entity.getConfirmedPassword());
         return userDto;
     }
 

@@ -25,7 +25,7 @@ public class SwaggerConfig {
                 )
                 .info(new Info()
                         .title("Task management API")
-                        .description("Task management application")
+                        .description("Система управления задачами")
                         .version("1.0")
                 );
     }

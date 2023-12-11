@@ -2,14 +2,16 @@ package ru.solarev.taskmanagementapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.solarev.taskmanagementapi.dto.UserDto;
-import ru.solarev.taskmanagementapi.dto.mapper.UserMapper;
+import org.springframework.transaction.annotation.Transactional;
 import ru.solarev.taskmanagementapi.entity.user.Role;
 import ru.solarev.taskmanagementapi.entity.user.User;
-import ru.solarev.taskmanagementapi.exceptions.AccessDeniedException;
+import ru.solarev.taskmanagementapi.exceptions.ResourceAccessDeniedException;
 import ru.solarev.taskmanagementapi.exceptions.ResourceNotFoundException;
 import ru.solarev.taskmanagementapi.repository.UserRepository;
 import ru.solarev.taskmanagementapi.service.UserService;
@@ -30,6 +32,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "UserService::findById", key="#id")
     public User findById(Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() ->
@@ -38,6 +42,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "UserService::findByEmail", key="#email")
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
@@ -45,6 +51,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "UserService::findByName", key="#name")
     public User findByName(String name) {
         return userRepository.findByName(name)
                 .orElseThrow(() ->
@@ -52,6 +60,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+//    @Cacheable(value = "UserService::findById", key="#user.id", condition = "#user.id!=null")
+    @Caching(cacheable = {
+            @Cacheable(value = "UserService::findById", key="#user.id", condition = "#user.id!=null"),
+            @Cacheable(value = "UserService::findByName", key="#user.name", condition = "#user.name!=null"),
+            @Cacheable(value = "UserService::findByEmail", key="#user.email", condition = "#user.email!=null")
+    })
     public User create(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalStateException("Пользователь с таким email уже существует");
@@ -72,32 +87,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @Caching(put = {
+            @CachePut(value = "UserService::findById", key="#updateUser.id", condition = "#updateUser.id!=null"),
+            @CachePut(value = "UserService::findByName", key="#updateUser.name", condition = "#updateUser.name!=null"),
+            @CachePut(value = "UserService::findByEmail", key="#updateUser.email", condition = "#updateUser.email!=null")
+    })
     public User update(User updateUser, String email) {
         if (!updateUser.getPassword().equals(updateUser.getConfirmedPassword())) {
             throw new IllegalStateException(
                     "Пароли не совпадают"
             );
         }
-        var user = userRepository
-                .findById(updateUser.getId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Пользователь не найден"));
+        var user = findById(updateUser.getId());
         user.setName(updateUser.getName());
         user.setPassword(updateUser.getPassword());
         user.setEmail(updateUser.getEmail());
         user.setUpdatedDate(LocalDateTime.now());
+        if (!user.getEmail().equals(email)) {
+            throw new ResourceAccessDeniedException("Вы не можете изменить другого пользователя");
+        }
         return userRepository.save(user);
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "UserService::findById", key="#id")
     public void delete(Long id, String email) {
-        var user = userRepository.findById(id);
-        if (user.get().getEmail().equals(email)) {
-            user.ifPresent(userRepository::delete);
+        var user = findById(id);
+        if (user.getEmail().equals(email)) {
+            userRepository.delete(user);
+        } else {
+            throw new ResourceAccessDeniedException("Вы не можете удалить другого пользователя");
         }
     }
 
     @Override
+    @Transactional
+    @CachePut(value = "UserService::findById", key="#id")
     public User addUserAdminRole(Long id) {
         var user = findById(id);
         user.setRoles(Collections.singleton(new Role(2, "ROLE_ADMIN")));

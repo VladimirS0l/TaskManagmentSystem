@@ -26,7 +26,7 @@ public class TaskDto {
     private String description;
     @Schema(description = "Статус задачи", example = "TODO, IN_PROGRESS, DONE")
     private Status status;
-    @Schema(description = "Приоритет заказа", required = true, example = "HIGH, MIDDLE, LOW")
+    @Schema(description = "Приоритет заказа", example = "HIGH, MIDDLE, LOW")
     private Priority priority;
     @Schema(description = "Имя автора", example = "Владимир")
     private String author;

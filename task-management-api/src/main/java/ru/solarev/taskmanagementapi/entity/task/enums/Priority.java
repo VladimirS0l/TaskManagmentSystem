@@ -1,5 +1,7 @@
 package ru.solarev.taskmanagementapi.entity.task.enums;
 
-public enum Priority {
+import java.io.Serializable;
+
+public enum Priority implements Serializable {
     LOW, MIDDLE, HIGH
 }
