@@ -21,7 +21,7 @@ public class Comment implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Task task;
     @Column(name = "username")
     private String username;

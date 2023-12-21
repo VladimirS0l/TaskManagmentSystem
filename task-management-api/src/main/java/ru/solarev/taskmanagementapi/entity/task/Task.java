@@ -34,7 +34,7 @@ public class Task implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "priority")
     private Priority priority;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User author;
     @Column(name = "assignee")
     private String assignee;

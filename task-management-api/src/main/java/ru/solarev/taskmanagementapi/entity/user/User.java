@@ -31,7 +31,7 @@ public class User implements UserDetails, Serializable {
     private String password;
     @Transient
     private String confirmedPassword;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "author")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "author")
     private List<Task> tasks;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;

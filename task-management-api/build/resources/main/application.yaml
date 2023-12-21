@@ -4,6 +4,7 @@ spring:
 
   datasource:
     url: jdbc:postgresql://task-management-postgres:5432/task-management?currentSchema=taskmanagement
+#    url: jdbc:postgresql://localhost:5432/task-management?currentSchema=taskmanagement
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
@@ -20,6 +21,7 @@ spring:
   data:
     redis:
       host: task-management-redis
+#      host: localhost
       port: 6379
       password: 123456
 
