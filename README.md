@@ -30,12 +30,12 @@
 Вы получили доступ к работе с приложением.
 
 
-Sequence diagram: 
+Sequence диаграмма: 
 
 ![Sequence diagram](/docs/sequenceDiagram.png)
 
 
-Database diagram:
+Database диаграмма:
 
 ![Database diagram](/docs/taskmanagement.jpg)
 
